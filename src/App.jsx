@@ -21,6 +21,7 @@ function App() {
   const [currentTab, setCurrentTab] = useState(0);
   const source = useRef(null);
   const editorRef = useRef(null);
+  var typingTimer;
 
   useEffect(() => {
     if (!source.current && content === null) return;
@@ -69,8 +70,32 @@ function App() {
     if (tabs.length && tabs[currentTab] !== "undefined") {
       tabs[currentTab].content = content;
     }
+    if (
+      tabs.length &&
+      tabs[currentTab] !== "undefined" &&
+      tabs[currentTab].language !== "undefined" &&
+      tabs[currentTab].language !== ""
+    ) {
+      const textarea = document.querySelector('[aria-hidden="false"] > textarea')
+      function startTyping(){
+        clearTimeout(typingTimer)
+        typingTimer = setTimeout(() => localStorage.setItem("content", JSON.stringify(tabs)), 5000)
+      }
+      const clearTime = () => clearTimeout(typingTimer);
+      textarea.addEventListener("keyup", startTyping)
+      textarea.addEventListener("keydown", clearTime)
+      return (() => {
+        textarea.removeEventListener("keyup", startTyping)
+        textarea.removeEventListener("keydown", clearTime)
+      })
+    }
   }, [content, html, js, css]);
 
+  useEffect(() => {
+    if(localStorage.getItem("content")) {
+      setTabs(JSON.parse(localStorage.getItem("content")))
+    }
+  }, [])
 
   useEffect(() => {
     if (tabs.length === 0) {
@@ -104,7 +129,6 @@ function App() {
       ? setTabs((tabs) => [...tabs, { name: "", content: "" }])
       : setTabs([{ name: "", content: "" }]);
     setCurrentTab(tabs?.length);
-    console.log(tabContainer.scrollWidth);
     tabContainer.scrollTop = tabContainer.scrollWidth;
   };
 
