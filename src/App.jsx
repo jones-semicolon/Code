@@ -9,6 +9,7 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-tomorrow.css";
 import Tab from "./components/Tab";
+import Alert from "./components/Alert";
 import "./App.css";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
   const [html, setHtml] = useState("");
   const [css, setCss] = useState("");
   const [js, setJs] = useState("");
+  const [saved, setSaved] = useState(false);
   const [tabs, setTabs] = useState([]);
   //const currentTab = useRef(0);
   const [currentTab, setCurrentTab] = useState(0);
@@ -76,29 +78,44 @@ function App() {
       tabs[currentTab].language !== "undefined" &&
       tabs[currentTab].language !== ""
     ) {
-      const textarea = document.querySelector('[aria-hidden="false"] > textarea')
-      function startTyping(){
-        clearTimeout(typingTimer)
-        typingTimer = setTimeout(() => localStorage.setItem("content", JSON.stringify(tabs)), 5000)
+      const textarea = document.querySelector(
+        '[aria-hidden="false"] > textarea'
+      );
+      function startTyping() {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => {
+          localStorage.setItem("content", JSON.stringify(tabs));
+          setSaved(true);
+        }, 3000);
       }
       const clearTime = () => clearTimeout(typingTimer);
-      textarea.addEventListener("keyup", startTyping)
-      textarea.addEventListener("keydown", clearTime)
-      return (() => {
-        textarea.removeEventListener("keyup", startTyping)
-        textarea.removeEventListener("keydown", clearTime)
-      })
+      textarea.addEventListener("keyup", startTyping);
+      textarea.addEventListener("keydown", clearTime);
+      return () => {
+        textarea.removeEventListener("keyup", startTyping);
+        textarea.removeEventListener("keydown", clearTime);
+      };
     }
   }, [content, html, js, css]);
 
   useEffect(() => {
-    if(localStorage.getItem("content")) {
-      setTabs(JSON.parse(localStorage.getItem("content")))
+    if (localStorage.getItem("content")) {
+      setTabs(JSON.parse(localStorage.getItem("content")));
     }
-  }, [])
+    const textContainer = document.querySelector(".textarea")
+    const edit = () => {
+      document.querySelector("[aria-hidden=false] textarea").focus()
+    }
+    textContainer.addEventListener("click", edit)
+    return(() => textContainer.removeEventListener("click", edit))
+  }, []);
 
   useEffect(() => {
-    if (tabs.length === 0) {
+    
+    if (
+      (tabs.length === 0 && !localStorage.getItem("content")) ||
+      JSON.parse(localStorage.getItem("content"))?.length === 0
+    ) {
       setTabs([
         {
           name: "",
@@ -106,30 +123,39 @@ function App() {
           language: "",
         },
       ]);
+    } else if (tabs.length > 0) {
+      localStorage.setItem("content", JSON.stringify(tabs));
     }
+    
   }, [tabs]);
 
   useEffect(() => {
+    const tabContainer = document.querySelector(".tabs");
     if (tabs[currentTab] !== undefined && tabs.length) {
       setContent(tabs[currentTab].content);
     }
+    setTimeout(() => 
+    tabContainer.scrollTo(tabContainer.offsetWidth * currentTab, 0), 50)
   }, [currentTab, tabs]);
 
   const closeTab = (index) => {
-    if (currentTab >= index && (currentTab !== 0 || index !== 0)) {
+    if (currentTab >= index && currentTab !== 0 /*|| index !== 0*/) {
       setCurrentTab(currentTab - 1);
     }
     tabs.splice(index, 1);
-    tabs?.length > 0 ? setTabs((tabs) => [...tabs]) : setTabs([]);
+    if (tabs?.length > 0) {
+      setTabs((tabs) => [...tabs]);
+    } else {
+      localStorage.removeItem("content");
+      setTabs([]);
+    }
   };
 
   const addTab = () => {
-    const tabContainer = document.querySelector(".tabs");
     tabs?.length
       ? setTabs((tabs) => [...tabs, { name: "", content: "" }])
       : setTabs([{ name: "", content: "" }]);
-    setCurrentTab(tabs?.length);
-    tabContainer.scrollTop = tabContainer.scrollWidth;
+    setCurrentTab(tabs?.length)
   };
 
   const lang = (type) => {
@@ -147,6 +173,7 @@ function App() {
 
   return (
     <div className="App">
+      <Alert ariaHidden={saved} saved={() => setSaved(false)} />
       <section>
         <nav>
           <div className="toolbar">

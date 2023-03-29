@@ -13,19 +13,13 @@
   -webkit-text-size-adjust: 100%;
 }
 
-*,
-*::before,
-*::after {
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   user-select: none;
-  transition: all 1s ease-in;
-}
-
-*::before,
-*::after {
-  content: "";
+  transition: all 1s linear;
+  scroll-behavior: smooth;
 }
 
 input {
@@ -37,6 +31,7 @@ input {
   font-size: clamp(0.6em, 1.5vw, 12px);
   transition: none;
   font-weight: 500;
+  cursor: pointer;
 }
 
 body,
@@ -53,8 +48,8 @@ body,
 svg {
   stroke-width: 2;
   stroke: white;
-  height: 100%;
-  width: 100%;
+  max-height: 100%;
+  max-width: 100%;
   transition: none;
 }
 

@@ -8,11 +8,13 @@ import {
 } from "@tabler/icons-react";
 
 export default function Tab(props) {
-  const [title, setTitle] = useState(props?.tab?.name);
+  const [title, setTitle] = useState("");
 
   useEffect(() => {
     if (title) {
       props.tab.name = title;
+    } else if (title !== props.tab.name) {
+      setTitle(props.tab.name);
     }
   }, [title]);
 
@@ -26,7 +28,6 @@ export default function Tab(props) {
             style={{ fill: "hsl(0 70% 60%)", stroke: "hsl(0 70% 60%)" }}
           />
         );
-
       case /^.*\.css$/.test(str):
         props.tab.language = "css";
         return (
@@ -69,6 +70,7 @@ export default function Tab(props) {
         onClick={(e) => {
           e.stopPropagation();
           props.close(props.index);
+          setTitle("");
         }}
       >
         <IconX />
