@@ -43,6 +43,7 @@ body,
   width: max(320px, 100vw);
   height: 100vh;
   height: 100dvh;
+  overscroll-behavior: none;
 }
 
 svg {

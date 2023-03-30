@@ -11,11 +11,10 @@ export default function Tab(props) {
   const [title, setTitle] = useState("");
 
   useEffect(() => {
-    if (title) {
-      props.tab.name = title;
-    } else if (title !== props.tab.name) {
-      setTitle(props.tab.name);
-    }
+  	if(title.length){
+    props.tab.name = title;
+  	}
+  	setTitle(props.tab.name)
   }, [title]);
 
   const logoHandler = (str) => {

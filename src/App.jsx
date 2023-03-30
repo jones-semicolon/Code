@@ -102,16 +102,15 @@ function App() {
     if (localStorage.getItem("content")) {
       setTabs(JSON.parse(localStorage.getItem("content")));
     }
-    const textContainer = document.querySelector(".textarea")
+    const textContainer = document.querySelector(".textarea");
     const edit = () => {
-      document.querySelector("[aria-hidden=false] textarea").focus()
-    }
-    textContainer.addEventListener("click", edit)
-    return(() => textContainer.removeEventListener("click", edit))
+      document.querySelector("[aria-hidden=false] textarea").focus();
+    };
+    textContainer.addEventListener("click", edit);
+    return () => textContainer.removeEventListener("click", edit);
   }, []);
 
   useEffect(() => {
-    
     if (
       (tabs.length === 0 && !localStorage.getItem("content")) ||
       JSON.parse(localStorage.getItem("content"))?.length === 0
@@ -126,7 +125,6 @@ function App() {
     } else if (tabs.length > 0) {
       localStorage.setItem("content", JSON.stringify(tabs));
     }
-    
   }, [tabs]);
 
   useEffect(() => {
@@ -134,8 +132,10 @@ function App() {
     if (tabs[currentTab] !== undefined && tabs.length) {
       setContent(tabs[currentTab].content);
     }
-    setTimeout(() => 
-    tabContainer.scrollTo(tabContainer.offsetWidth * currentTab, 0), 50)
+    setTimeout(
+      () => tabContainer.scrollTo(tabContainer.offsetWidth * currentTab, 0),
+      50
+    );
   }, [currentTab, tabs]);
 
   const closeTab = (index) => {
@@ -151,11 +151,15 @@ function App() {
     }
   };
 
+  const onResize = (event) => {
+    console.log(event);
+  };
+
   const addTab = () => {
     tabs?.length
       ? setTabs((tabs) => [...tabs, { name: "", content: "" }])
       : setTabs([{ name: "", content: "" }]);
-    setCurrentTab(tabs?.length)
+    setCurrentTab(tabs?.length);
   };
 
   const lang = (type) => {
