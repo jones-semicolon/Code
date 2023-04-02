@@ -17,9 +17,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  user-select: none;
-  transition: all 1s linear;
   scroll-behavior: smooth;
+  user-select: none;
 }
 
 input {
@@ -58,8 +57,7 @@ div > svg > *:not(:first-child) {
   stroke: white;
 }
 
-button,
-textarea {
+button {
   border: none;
   outline: none;
   background: none;

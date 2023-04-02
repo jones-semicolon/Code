@@ -5,20 +5,21 @@ import {
   IconBrandCss3,
   IconBrandJavascript,
   IconCode,
+
 } from "@tabler/icons-react";
 
 export default function Tab(props) {
   const [title, setTitle] = useState("");
 
   useEffect(() => {
-  	if(title.length){
-    props.tab.name = title;
-  	}
-  	setTitle(props.tab.name)
+    if (title.length) {
+      props.tab.name = title;
+    }
+    if (props.tab.name.length === 1) return;
+    setTitle(props.tab.name);
   }, [title]);
 
   const logoHandler = (str) => {
-    if (!str) return;
     switch (true) {
       case /^.*\.html$/.test(str):
         props.tab.language = "html";
@@ -42,7 +43,8 @@ export default function Tab(props) {
           />
         );
       default:
-        return;
+        props.tab.language = "txt";
+        return <IconCode />;
     }
   };
 
